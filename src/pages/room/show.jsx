@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChatBox } from "src/components/chatbox";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:8082", {
+const socket = io("http://localhost:8092", {
   withCredentials: true,
   transports: ["websocket", "polling"],
   autoConnect: false,
