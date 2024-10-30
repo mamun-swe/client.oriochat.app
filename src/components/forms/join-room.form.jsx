@@ -6,6 +6,7 @@ export const JoinRoomForm = ({ loading, onSubmit }) => {
   const methods = useForm({
     defaultValues: {
       username: "",
+      userid: "",
     },
   });
 
@@ -15,6 +16,16 @@ export const JoinRoomForm = ({ loading, onSubmit }) => {
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(handleFormSubmit)}>
+        {/* Userid input control */}
+        <div className="mb-6">
+          <HookFormInputField
+            type="text"
+            name="userid"
+            label="User ID (Must be remember)"
+            rules={{ required: "User ID is required." }}
+          />
+        </div>
+
         {/* Username input control */}
         <div className="mb-6">
           <HookFormInputField

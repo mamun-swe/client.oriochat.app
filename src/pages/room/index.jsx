@@ -81,7 +81,7 @@ export const Room = () => {
   const handleJoinRoom = async (data) => {
     setRoomJoinLoading(true);
     const formData = {
-      sender: new Date().getTime(),
+      sender: data.userid,
       name: data.username,
       room: selectedRoom.roomId,
       room_name: selectedRoom.name,

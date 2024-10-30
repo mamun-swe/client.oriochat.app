@@ -43,8 +43,8 @@ export const ChatBox = ({
           ) : (
             <RegularMessage
               key={index}
-              sender_name={message.name}
-              is_self_message={message.sender == sender}
+              sender_name={message.senderName}
+              is_self_message={message.senderId == sender}
               timestamp={new Date().toLocaleTimeString()}
               text={message.content}
             />

@@ -33,8 +33,8 @@ export const RoomShow = () => {
       // Only join room once
       if (!joinedRoomRef.current) {
         socket.emit("join-to-room", {
-          sender,
-          name,
+          senderId: sender,
+          senderName: name,
           room,
           content: "Welcome!",
         });
@@ -50,15 +50,20 @@ export const RoomShow = () => {
       handleSocketConnection();
     }
 
-    // Listen for messages
-    const handleMessage = (message) => {
-      setMessages((prev) => [...prev, message]);
+    socket.on("error", (error) => {
+      console.log("Socket error:", error);
+    });
+
+    // Listen for single message
+    const handleMessages = (messages) => {
+      console.log("message", messages);
+      setMessages((prev) => [...prev, ...messages]);
     };
 
-    socket.on("message", handleMessage);
+    socket.on("messages", handleMessages);
 
     return () => {
-      socket.off("message", handleMessage);
+      socket.off("messages", handleMessages);
       socket.disconnect();
       joinedRoomRef.current = false;
     };
@@ -67,8 +72,8 @@ export const RoomShow = () => {
   // handle send message
   const sendMessage = (message) => {
     const data = {
-      sender,
-      name,
+      senderId: sender,
+      senderName: name,
       room,
       content: message,
     };
@@ -78,8 +83,8 @@ export const RoomShow = () => {
   // handle leave room
   const handleLeaveRoom = () => {
     socket.emit("leave-room", {
-      sender,
-      name,
+      senderId: sender,
+      senderName: name,
       room,
       content: "Bye!",
     });
