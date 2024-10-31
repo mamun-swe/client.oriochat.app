@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PrimaryButton } from "src/components/button";
 import { RegularMessage, WelcomeMessage } from "src/components/chatbox/message";
+import { formatDateTime } from "src/utility/helper";
 
 export const ChatBox = ({
   sender,
@@ -38,14 +39,14 @@ export const ChatBox = ({
             <WelcomeMessage
               key={index}
               text={message.content}
-              timestamp={"10:30 AM"}
+              timestamp={formatDateTime(message.createdAt)}
             />
           ) : (
             <RegularMessage
               key={index}
               sender_name={message.senderName}
               is_self_message={message.senderId == sender}
-              timestamp={new Date().toLocaleTimeString()}
+              timestamp={formatDateTime(message.createdAt)}
               text={message.content}
             />
           )
