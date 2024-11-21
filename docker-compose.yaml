@@ -12,9 +12,9 @@ services:
       - VITE_SOCKET_ENDPOINT=http://localhost:8092/
 
     networks:
-      - oriochat-network
+      - oriochat-client-network
 
 networks:
-  oriochat-network:
-    name: oriochat-network
+  oriochat-client-network:
+    name: oriochat-client-network
     driver: bridge
