@@ -28,3 +28,12 @@ export const formatDateTime = (date) => {
   };
   return new Date(date).toLocaleString("en-US", options);
 };
+
+// Get icon name
+export const getIconName = (name) => {
+  const str = name.split(" ");
+  const firstLetter = str[0][0].toUpperCase();
+  const lastLetter = str[str.length - 1][0].toUpperCase();
+
+  return firstLetter + lastLetter;
+};

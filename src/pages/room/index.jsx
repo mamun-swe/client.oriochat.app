@@ -1,6 +1,6 @@
 import { useState, Fragment, useCallback, useEffect } from "react";
 import { AxiosError, isAxiosError } from "axios";
-import { Card } from "src/components/card";
+import { CiLogout } from "react-icons/ci";
 import { HttpServices } from "src/services";
 import { Images } from "src/utility/images";
 import { toaster } from "src/utility/toaster";
@@ -10,7 +10,7 @@ import { HiOutlinePlusSmall } from "react-icons/hi2";
 import { PrimaryModal } from "src/components/modals";
 import { PrimaryButton } from "src/components/button";
 import { SomethingGoingWrong } from "src/components/501";
-import { networkErrorHandler } from "src/utility/helper";
+import { getIconName, networkErrorHandler } from "src/utility/helper";
 import { RoomForm } from "src/components/forms/room.form";
 import { JoinRoomForm } from "src/components/forms/join-room.form";
 import { PreviewPreloader } from "src/components/preloader/preview.preloader";
@@ -96,58 +96,80 @@ export const Room = () => {
 
   return (
     <Fragment>
-      <div className="container">
-        <div className="w-full md:max-w-2xl mx-auto pt-10 lg:pt-20">
-          <Card>
-            <Card.Header className="!p-5">
-              <div className="flex justify-between items-center">
-                <p className="text-xl font-semibold">Available Rooms</p>
-                <PrimaryButton
-                  type="button"
-                  buttonType="circle"
-                  className="!p-2"
-                  onClick={handleOpen}
-                >
-                  <HiOutlinePlusSmall size={17} />
-                </PrimaryButton>
+      <div className="container min-h-screen border-x py-5 lg:py-10">
+        {/* Profile information container */}
+        <div className="flex justify-between items-center lg:pl-5 pb-5 lg:pb-10 border-b">
+          <div className="w-full lg:flex gap-4 items-center space-y-3 lg:space-y-0">
+            <div className="flex justify-between items-center">
+              <div className="w-20 h-20 lg:w-24 lg:h-24 flex justify-center items-center rounded-full bg-primary/40">
+                <p className="uppercase font-bold text-3xl lg:text-4xl">
+                  {getIconName("Abdullah al Mamun")}
+                </p>
               </div>
-            </Card.Header>
-            <Card.Body className="!p-0">
-              {/* Preview data loading */}
-              {isLoading && !serverError && !data.length && (
-                <div className="p-4 lg:p-6">
-                  <PreviewPreloader />
-                </div>
-              )}
+              <LogoutButton className="block lg:hidden" />
+            </div>
+            <div className="flex-grow">
+              <p className="text-xl lg:text-2xl font-semibold capitalize">
+                Abdullah Al Mamun
+              </p>
+              <p className="lowercase text-sm">
+                abdullah-al-mamun-1733048867143
+              </p>
+              <p className="lowercase text-sm">mamun.swe.277@gmail.com</p>
+            </div>
+          </div>
 
-              {/* Data not available preview */}
-              {!isLoading && !serverError && !data.length && (
-                <div className="p-4 lg:p-6">
-                  <NoContent message="No rooms available!" />
-                </div>
-              )}
+          <LogoutButton className="hidden lg:block" />
+        </div>
 
-              {/* Server error preview */}
-              {!isLoading && !data.length && serverError && (
-                <div className="p-4 lg:p-6">
-                  <SomethingGoingWrong />
-                </div>
-              )}
+        {/* Room header */}
+        <div className="flex justify-between items-center py-5 border-b">
+          <p className="text-xl font-semibold">Available Rooms</p>
+          <PrimaryButton
+            type="button"
+            buttonType="circle"
+            className="!p-2"
+            onClick={handleOpen}
+          >
+            <HiOutlinePlusSmall size={17} />
+          </PrimaryButton>
+        </div>
 
-              {/* List of rooms preview */}
-              {data.length > 0 &&
-                !isLoading &&
-                !serverError &&
-                data.map((room, i) => (
-                  <ListItem
-                    key={room.id}
-                    title={room.name}
-                    border_bottom={i + 1 < data.length}
-                    onClick={() => handleRoomSelection(room)}
-                  />
-                ))}
-            </Card.Body>
-          </Card>
+        {/* Room list body container */}
+        <div className="py-5">
+          {/* Preview data loading */}
+          {isLoading && !serverError && !data.length && (
+            <div className="p-4 lg:p-6">
+              <PreviewPreloader />
+            </div>
+          )}
+
+          {/* Data not available preview */}
+          {!isLoading && !serverError && !data.length && (
+            <div className="p-4 lg:p-6">
+              <NoContent message="No rooms available!" />
+            </div>
+          )}
+
+          {/* Server error preview */}
+          {!isLoading && !data.length && serverError && (
+            <div className="p-4 lg:p-6">
+              <SomethingGoingWrong />
+            </div>
+          )}
+
+          {/* List of rooms preview */}
+          {data.length > 0 &&
+            !isLoading &&
+            !serverError &&
+            data.map((room, i) => (
+              <ListItem
+                key={room.id}
+                title={room.name}
+                border_bottom={i + 1 < data.length}
+                onClick={() => handleRoomSelection(room)}
+              />
+            ))}
         </div>
       </div>
 
@@ -191,5 +213,26 @@ const ListItem = (props) => {
         className="w-8 h-8 opacity-0 group-hover:opacity-100"
       />
     </div>
+  );
+};
+
+// Logout button
+const LogoutButton = ({ className = "" }) => {
+  const navigate = useNavigate();
+
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
+
+  return (
+    <button
+      type="button"
+      className={`p-2 transition-all rounded-full bg-primary/5 hover:bg-primary/20 ${className}`}
+      onClick={handleLogout}
+    >
+      <CiLogout size={23} />
+    </button>
   );
 };

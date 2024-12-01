@@ -21,7 +21,7 @@ export const Home = () => {
               conversations flow smoothly, whether in one-on-one chats or group
               discussions.
             </p>
-            <Link to="/room">
+            <Link to="/signin">
               <PrimaryButton type="button">Get Started</PrimaryButton>
             </Link>
           </div>

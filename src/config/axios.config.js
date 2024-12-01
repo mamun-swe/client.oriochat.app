@@ -1,17 +1,23 @@
 import axios from "axios";
 
-const apiUrl = import.meta.env.VITE_API_ENDPOINT || "";
+const userServiceAPIURL = import.meta.env.VITE_USER_SERVICE_API_ENDPOINT || "";
+const chatServiceAPIURL = import.meta.env.VITE_CHAT_SERVICE_API_ENDPOINT || "";
 
 /* Common request config */
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-/** Public request instance */
-const publicRequest = axios.create({
-  baseURL: apiUrl,
+/** User service request instance */
+const userServiceRequest = axios.create({
+  baseURL: userServiceAPIURL,
 });
 
-/* Public request interceptor */
-publicRequest.interceptors.request.use(
+/** Chat service request instance */
+const chatServiceRequest = axios.create({
+  baseURL: chatServiceAPIURL,
+});
+
+/* User service request interceptor */
+userServiceRequest.interceptors.request.use(
   (config) => {
     return config;
   },
@@ -20,4 +26,14 @@ publicRequest.interceptors.request.use(
   }
 );
 
-export { publicRequest };
+/* Chat service request interceptor */
+chatServiceRequest.interceptors.request.use(
+  (config) => {
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+export { userServiceRequest, chatServiceRequest };
