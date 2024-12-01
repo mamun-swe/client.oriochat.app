@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getToken } from "src/utility/helper";
 
 const userServiceAPIURL = import.meta.env.VITE_USER_SERVICE_API_ENDPOINT || "";
 const chatServiceAPIURL = import.meta.env.VITE_CHAT_SERVICE_API_ENDPOINT || "";
@@ -19,6 +20,10 @@ const chatServiceRequest = axios.create({
 /* User service request interceptor */
 userServiceRequest.interceptors.request.use(
   (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {

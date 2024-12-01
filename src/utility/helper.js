@@ -37,3 +37,8 @@ export const getIconName = (name) => {
 
   return firstLetter + lastLetter;
 };
+
+// get token from local storage
+export const getToken = () => {
+  return localStorage.getItem("token");
+};

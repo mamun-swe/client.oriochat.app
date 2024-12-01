@@ -1,10 +1,12 @@
 import { Fragment, useState } from "react";
 import { Images } from "src/utility/images";
 import { HttpServices } from "src/services";
+import { useNavigate } from "react-router-dom";
 import { HotToast } from "src/components/hot-toast";
 import { SignInForm } from "src/components/forms/signin.form";
 
 export const SignIn = () => {
+  const navigate = useNavigate();
   const [isLoading, setLoading] = useState(false);
 
   // handle signin submit
@@ -13,11 +15,15 @@ export const SignIn = () => {
       setLoading(true);
       const response = await HttpServices.authService.signIn(data);
       if (response && response.status === 200) {
-        console.log(response);
+        localStorage.setItem("token", response.data);
+        HotToast.Success({ message: "Sign in successful." });
+        navigate("/chat");
       }
+
+      setLoading(false);
     } catch (error) {
       setLoading(false);
-      HotToast.Error({ message: error?.response?.data?.message });
+      HotToast.Error({ message: error?.response?.data });
       console.log(error);
     }
   };

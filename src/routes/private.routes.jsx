@@ -1,6 +1,7 @@
 import { ChatLayout } from "src/layouts/chat.layout";
 import { Room } from "src/pages/room";
 import { RoomShow } from "src/pages/room/show";
+import { getToken } from "src/utility/helper";
 
 const routes = [
   {
@@ -20,5 +21,10 @@ const routes = [
 ];
 
 export const privateRoutes = () => {
-  return routes;
+  const token = getToken();
+  if (token) {
+    return routes;
+  }
+
+  return [];
 };
