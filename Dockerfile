@@ -22,7 +22,7 @@ RUN npm run build
 RUN npm install -g serve
 
 # PORT defined
-EXPOSE 3000
+EXPOSE 80
 
 # Execute command
-CMD ["serve", "-s", "dist", "-p", "3000"]
+CMD ["serve", "-s", "build", "-p", "80"]

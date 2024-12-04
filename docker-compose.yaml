@@ -6,7 +6,7 @@ services:
     image: oriochat-client-image
     container_name: oriochat-client-container
     ports:
-      - 3000:3000
+      - 80:80
     environment:
       - VITE_USER_SERVICE_API_ENDPOINT=http://4.204.71.173:5000/
       - VITE_CHAT_SERVICE_API_ENDPOINT=http://4.204.71.173:8090/
