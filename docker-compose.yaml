@@ -8,9 +8,9 @@ services:
     ports:
       - 3000:3000
     environment:
-      - VITE_USER_SERVICE_API_ENDPOINT=http://localhost:5000/
-      - VITE_CHAT_SERVICE_API_ENDPOINT=http://localhost:5000/
-      - VITE_SOCKET_ENDPOINT=http://localhost:8092/
+      - VITE_USER_SERVICE_API_ENDPOINT=http://4.204.71.173:5000/
+      - VITE_CHAT_SERVICE_API_ENDPOINT=http://4.204.71.173:8090/
+      - VITE_SOCKET_ENDPOINT=http://4.204.71.173:8092/
 
     networks:
       - oriochat-client-network

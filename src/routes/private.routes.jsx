@@ -13,7 +13,7 @@ const routes = [
         element: <Room />,
       },
       {
-        path: "room/:id",
+        path: "room/:roomId",
         element: <RoomShow />,
       },
     ],

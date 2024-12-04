@@ -11,8 +11,8 @@ const createRoom = async (data) => {
 };
 
 // Get specific room
-const getRoom = async (id) => {
-  return await chatServiceRequest.get(`/api/v1/rooms/${id}`);
+const getRoom = async (roomId) => {
+  return await chatServiceRequest.get(`/api/v1/rooms/${roomId}`);
 };
 
 export const roomService = {

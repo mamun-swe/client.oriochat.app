@@ -12,7 +12,6 @@ import { PrimaryButton } from "src/components/button";
 import { SomethingGoingWrong } from "src/components/501";
 import { getIconName, networkErrorHandler } from "src/utility/helper";
 import { RoomForm } from "src/components/forms/room.form";
-import { JoinRoomForm } from "src/components/forms/join-room.form";
 import { PreviewPreloader } from "src/components/preloader/preview.preloader";
 import { ProfilePreloader } from "src/components/preloader/profile.preloader";
 
@@ -22,10 +21,6 @@ export const Room = () => {
   const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [isCreateLoading, setCreateLoading] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState(null);
-  const [roomJoinModal, setRoomJoinModal] = useState(false);
-  const [isRoomJoinLoading, setRoomJoinLoading] = useState(false);
-
   const [proifleData, setProfileData] = useState(null);
   const [profileLoading, setProfileLoading] = useState(true);
   const [serverError, setServerError] = useState(false);
@@ -94,27 +89,9 @@ export const Room = () => {
     }
   };
 
-  // handle room selection
-  const handleRoomSelection = (room) => {
-    setSelectedRoom(room);
-    setRoomJoinModal(true);
-  };
-
-  // handle join room
-  const handleJoinRoom = async (data) => {
-    setRoomJoinLoading(true);
-    const formData = {
-      sender: data.userid,
-      name: data.username,
-      room: selectedRoom.roomId,
-      room_name: selectedRoom.name,
-    };
-
-    setTimeout(() => {
-      setRoomJoinLoading(false);
-      const searchParams = new URLSearchParams(formData).toString();
-      navigate(`/chat/room/${selectedRoom.id}?${searchParams}`);
-    }, 1000);
+  // handle join to room
+  const joinToRoom = (room) => {
+    navigate(`/chat/room/${room.roomId}`);
   };
 
   return (
@@ -191,10 +168,10 @@ export const Room = () => {
                 !serverError &&
                 data.map((room, i) => (
                   <ListItem
-                    key={room.id}
+                    key={room.roomId}
                     title={room.name}
                     border_bottom={i + 1 < data.length}
-                    onClick={() => handleRoomSelection(room)}
+                    onClick={() => joinToRoom(room)}
                   />
                 ))}
             </div>
@@ -210,15 +187,6 @@ export const Room = () => {
           loading={isCreateLoading}
           onSubmit={handleFormSubmit}
         />
-      </PrimaryModal>
-
-      {/* Join room modal */}
-      <PrimaryModal
-        show={roomJoinModal}
-        title={`Join to ${selectedRoom?.name}`}
-        onHide={() => setRoomJoinModal(false)}
-      >
-        <JoinRoomForm loading={isRoomJoinLoading} onSubmit={handleJoinRoom} />
       </PrimaryModal>
     </Fragment>
   );

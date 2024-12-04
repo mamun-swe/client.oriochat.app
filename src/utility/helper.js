@@ -1,4 +1,5 @@
 import { toaster } from "src/utility/toaster";
+import { jwtDecode } from "jwt-decode";
 
 /* Global network error handler */
 export const networkErrorHandler = (error) => {
@@ -41,4 +42,14 @@ export const getIconName = (name) => {
 // get token from local storage
 export const getToken = () => {
   return localStorage.getItem("token");
+};
+
+// decode token
+export const decodeToken = () => {
+  const token = getToken();
+  if (token) {
+    return jwtDecode(token);
+  }
+
+  return null;
 };

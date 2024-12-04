@@ -1,7 +1,11 @@
-import { Fragment, useEffect, useState, useCallback, useRef } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { ChatBox } from "src/components/chatbox";
 import io from "socket.io-client";
+import { Fragment, useEffect, useState, useCallback, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { HttpServices } from "src/services";
+import { ChatBox } from "src/components/chatbox";
+import { decodeToken } from "src/utility/helper";
+import { SomethingGoingWrong } from "src/components/501";
+import { ChatBoxPreloader } from "src/components/preloader/chatbox.preloader";
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_ENDPOINT || "";
 
@@ -12,17 +16,35 @@ const socket = io(SOCKET_URL, {
 });
 
 export const RoomShow = () => {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [messages, setMessages] = useState([]);
-
-  const sender = searchParams.get("sender");
-  const name = searchParams.get("name");
-  const room = searchParams.get("room");
-  const room_name = searchParams.get("room_name");
-
-  // Ref to track if room has been joined
   const joinedRoomRef = useRef(false);
+  const navigate = useNavigate();
+  const { roomId } = useParams();
+  const [roomData, setRoomData] = useState(null);
+  const [isRoomDataLoading, setRoomDataLoading] = useState(true);
+  const [serverError, setServerError] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const sender = decodeToken();
+
+  //  Get room information
+  const fetchRoom = useCallback(async () => {
+    try {
+      const response = await HttpServices.roomService.getRoom(roomId);
+      if (response && response.status === 200) {
+        setTimeout(() => {
+          setRoomData(response.data?.data);
+          setRoomDataLoading(false);
+        }, 1000);
+      }
+    } catch (error) {
+      setRoomDataLoading(false);
+      setServerError(true);
+      console.log(error);
+    }
+  }, [roomId]);
+
+  useEffect(() => {
+    fetchRoom();
+  }, [fetchRoom]);
 
   // establish socket connection and join room
   const handleSocketConnection = useCallback(async () => {
@@ -33,22 +55,22 @@ export const RoomShow = () => {
       // Only join room once
       if (!joinedRoomRef.current) {
         socket.emit("join-to-room", {
-          senderId: sender,
-          senderName: name,
-          room,
+          senderId: sender?.sub,
+          senderName: sender?.name,
+          roomId,
           content: "Welcome!",
         });
-        joinedRoomRef.current = true; // Mark as joined
+        joinedRoomRef.current = true;
       }
     } catch (error) {
       console.log("Connection error:", error);
     }
-  }, [sender, name, room]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (name && room && sender) {
-      handleSocketConnection();
-    }
+    handleSocketConnection();
 
     socket.on("error", (error) => {
       console.log("Socket error:", error);
@@ -67,14 +89,14 @@ export const RoomShow = () => {
       socket.disconnect();
       joinedRoomRef.current = false;
     };
-  }, [name, room, sender, handleSocketConnection]);
+  }, [handleSocketConnection]);
 
   // handle send message
   const sendMessage = (message) => {
     const data = {
-      senderId: sender,
-      senderName: name,
-      room,
+      senderId: sender?.sub,
+      senderName: sender?.name,
+      roomId,
       content: message,
     };
     socket.emit("send-message", data);
@@ -83,24 +105,33 @@ export const RoomShow = () => {
   // handle leave room
   const handleLeaveRoom = () => {
     socket.emit("leave-room", {
-      senderId: sender,
-      senderName: name,
-      room,
+      senderId: sender?.sub,
+      senderName: sender?.name,
+      roomId,
       content: "Bye!",
     });
-    navigate("/room");
+    navigate("/chat");
   };
 
   return (
     <Fragment>
       <div className="container">
-        <ChatBox
-          sender={sender}
-          room_name={room_name}
-          messages={messages}
-          onLeave={handleLeaveRoom}
-          onSendMessage={sendMessage}
-        />
+        {isRoomDataLoading && !serverError && !roomData && <ChatBoxPreloader />}
+        {!isRoomDataLoading && !roomData && serverError && (
+          <div className="grid h-screen justify-center items-center">
+            <SomethingGoingWrong />
+          </div>
+        )}
+
+        {!isRoomDataLoading && !serverError && roomData && (
+          <ChatBox
+            sender={sender?.sub}
+            room_name={roomData?.name}
+            messages={messages}
+            onLeave={handleLeaveRoom}
+            onSendMessage={sendMessage}
+          />
+        )}
       </div>
     </Fragment>
   );
